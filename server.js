@@ -9,6 +9,10 @@ const passport = require('passport');
 
 const app = express();
 
+const cors = require('cors');
+
+app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
+
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());

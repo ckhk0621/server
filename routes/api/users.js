@@ -25,8 +25,6 @@ router.get('/test', (req, res) => res.json({msg: "Users work"}));
 
 router.post('/register', (req, res) => {
 
-  console.log(`req body======`, req.body)
-
   const { errors, isValid } = validateRegisterInput(req.body);
 
   // Check Validation
@@ -64,7 +62,7 @@ router.post('/register', (req, res) => {
     })
 });
 
-// @route   GET api/users/Login
+// @route   POST api/users/Login
 // @desc    Login and return JWT token
 // @access  Public
 router.post('/login',(req, res)=>{
@@ -75,17 +73,23 @@ router.post('/login',(req, res)=>{
     return res.status(400).json(errors);
   }
 
+  const { userName, password, email, type} = req.body
 
-  const email = req.body.email;
-  const password = req.body.password;
+  console.log(`req body====`, req.body);
 
   //Find user by email
   User.findOne({email})
     .then(user=>{
       // Check for user
       if(!user){
-        errors.email = 'ser email not found'
-        return res.status(404).json(errors);
+        errors.email = 'user email not found'
+        //return res.status(404).json({ errors});
+        return res.send({
+          status: 'error',
+          type,
+          errors,
+          currentAuthority: 'guest',
+        });
       }
       // Check password
       bcrypt.compare(password, user.password)
@@ -99,21 +103,31 @@ router.post('/login',(req, res)=>{
               avator: user.avator
             }
 
+            const isAdmin = email === 'admin@mail.com' ? 'admin' : 'user';
 
             // Sign Token
             jwt.sign(
               payload, 
               keys.secretOrKey, 
-              { expiresIn: 360000 }, 
+              { expiresIn: 3600000 }, 
               (err, token)=>{
-                res.json({
+                res.send({
                   success: true,
-                  token: 'Bearer ' + token
+                  token: 'Bearer ' + token,
+                  currentAuthority: isAdmin,
+                  status: 'ok',
+                  type
                 })
+                return;
               });
           } else {
             errors.password = 'Password not incorrect'
-            return res.status(400).json(errors);
+            return res.send({
+              status: 'error',
+              type,
+              errors,
+              currentAuthority: 'guest',
+            });
           }
         })
     })
