@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const fs = require('fs');
 
 // Notice model
 const Notice = require('../../models/Notice');
@@ -15,22 +16,30 @@ const validateNoticeInput = require('../../validation/notice');
 // @desc    Create notices
 // @access  Private
 router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
+
   const {errors, isValid } = validateNoticeInput(req.body);
 
   // Check Validation
   if(!isValid){
-    // Return any errors with 400 status
     return res.status(400).json(errors);
   }
 
   const newNotice = new Notice({
-    text: req.body.text,
+    title: req.body.title,
     name: req.body.name,
+    description: req.body.description,
+    public: req.body.public,
     avator: req.body.avator,
     user: req.user.id
   });
 
-  newNotice.save().then(post=>res.json(post));
+  newNotice.save().then(
+    res.send({
+      success: true,
+      status: 'ok'
+    })
+  );
+  return
 });
 
 // @route   GET api/notices

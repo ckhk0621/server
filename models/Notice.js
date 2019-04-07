@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const fs = require('fs');
 
 // Create Schema
 const NoticeSchema = new Schema({
@@ -7,9 +8,24 @@ const NoticeSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
-  text:{
+  title: {
     type: String,
     required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  public: {
+    type: String,
+    required: true
+  },
+  images:{
+    type: String,
+    data: Buffer
+  },
+  text:{
+    type: String
   },
   name: {
     type: String
