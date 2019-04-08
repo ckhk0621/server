@@ -5,14 +5,14 @@ module.exports = function validateNoticeInput(data){
   let errors = {};
 
   data.title = !isEmpty(data.title) ? data.title : '';
-  data.description = !isEmpty(data.description) ? data.description : '';
+  data.content = !isEmpty(data.content) ? data.content : '';
 
   if (Validator.isEmpty(data.title)){
     errors.title = 'title is required'
   }
 
-  if (Validator.isEmpty(data.description)) {
-    errors.description = 'Description is required'
+  if (Validator.isEmpty(data.content)) {
+    errors.content = 'Content is required'
   }
 
   if (Validator.isEmpty(data.public)) {

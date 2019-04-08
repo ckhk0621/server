@@ -12,7 +12,7 @@ const NoticeSchema = new Schema({
     type: String,
     required: true
   },
-  description: {
+  content: {
     type: String,
     required: true
   },
@@ -28,6 +28,9 @@ const NoticeSchema = new Schema({
     type: String
   },
   name: {
+    type: String
+  },
+  author: {
     type: String
   },
   avator:{

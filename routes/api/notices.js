@@ -27,10 +27,10 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
   const newNotice = new Notice({
     title: req.body.title,
     name: req.body.name,
-    description: req.body.description,
+    content: req.body.content,
     public: req.body.public,
-    avator: req.body.avator,
-    user: req.user.id
+    user: req.user.id,
+    author: req.user.name
   });
 
   newNotice.save().then(
