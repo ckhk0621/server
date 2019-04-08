@@ -17,6 +17,8 @@ const validateNoticeInput = require('../../validation/notice');
 // @access  Private
 router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
 
+  console.log(`REQ===`, req);
+
   const {errors, isValid } = validateNoticeInput(req.body);
 
   // Check Validation
@@ -26,7 +28,6 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
 
   const newNotice = new Notice({
     title: req.body.title,
-    name: req.body.name,
     content: req.body.content,
     public: req.body.public,
     user: req.user.id,

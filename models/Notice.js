@@ -13,8 +13,10 @@ const NoticeSchema = new Schema({
     required: true
   },
   content: {
-    type: String,
-    required: true
+    type: String
+  },
+  description: {
+    type: String
   },
   public: {
     type: String,
