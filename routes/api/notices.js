@@ -31,7 +31,8 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
     content: req.body.content,
     public: req.body.public,
     user: req.user.id,
-    author: req.user.name
+    author: req.user.name,
+    images: req.body.images,
   });
 
   newNotice.save().then(
@@ -58,7 +59,7 @@ router.get('/', (req, res)=>{
 // @access  Public
 router.get('/:id', (req, res)=>{
   Notice.findById(req.params.id)
-    .then(post=> res.json(post))
+    .then(post=> res.json({post, result: 'ok'}))
     .catch(err => res.status(404).json({nopostfiund: 'No post found with that id'}));
 });
 

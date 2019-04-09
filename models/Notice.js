@@ -23,7 +23,7 @@ const NoticeSchema = new Schema({
     required: true
   },
   images:{
-    type: String,
+    type: Array,
     data: Buffer
   },
   text:{

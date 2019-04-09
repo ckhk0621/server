@@ -16,7 +16,7 @@ app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: "50mb"}));
 
 // DB Config
 const db = require('./config/keys').mongoURI;
