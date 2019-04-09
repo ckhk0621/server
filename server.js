@@ -9,6 +9,7 @@ const notices = require('./routes/api/notices');
 const memo = require('./routes/api/memo');
 const inout = require('./routes/api/inout');
 const passport = require('passport');
+const ridebooking = require('./routes/api/ridebooking');
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.use('/api/posts', posts);
 app.use('/api/notices', notices);
 app.use('/api/memo', memo);
 app.use('/api/inout', inout);
+app.use('/api/ridebooking', ridebooking);
 
 const port = process.env.PORT || 5000;
 
