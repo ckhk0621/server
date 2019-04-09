@@ -8,7 +8,7 @@ const InoutSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
-  title: {
+  staff: {
     type: String,
     required: true
   },
@@ -16,7 +16,8 @@ const InoutSchema = new Schema({
     type: String
   },
   inout: {
-    type: String
+    type: Array,
+    required: true
   },
   author: {
     type: String

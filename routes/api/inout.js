@@ -15,13 +15,12 @@ const Profile = require('../../models/Profile');
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 
   const newInout = new Inout({
-    title: req.body.title,
+    staff: req.body.staff,
     remark: req.body.remark,
     user: req.user.id,
-    inout: req.user.inout,
+    inout: req.body.inout,
     author: req.user.name,
-    priority: req.body.priority,
-    images: req.body.images,
+    priority: req.body.priority
   });
 
   newInout.save().then(
