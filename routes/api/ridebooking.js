@@ -9,111 +9,62 @@ const Ridebooking = require('../../models/Ridebooking');
 // Profile model
 const Profile = require('../../models/Profile');
 
-// Validation
-const validateMemoInput = require('../../validation/memo');
-
-// @route   POST api/memo
+// @route   POST api/ridebooking
 // @desc    Create Ride Booking
 // @access  Private
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 
-  // const { errors, isValid } = validateMemoInput(req.body);
-
-  // // Check Validation
-  // if (!isValid) {
-  //   return res.status(400).json(errors);
-  // }
   let getGuest = null;
   if(typeof req.body.guest !== 'undefined'){
     getGuest = req.body.guest.split(',');
   }
 
-  const newRidebooking = new Ridebooking({
-    passenger: req.body.passenger,
-    pickupLocation: req.body.pickupLocation,
-    targetLocation: req.body.targetLocation,
-    date: req.body.date,
-    return: req.body.return,
-    numberOfGuest: req.body.numberOfGuest,
-    guest: getGuest,
-    remark: req.body.remark,
-    user: req.user.id,
-    author: req.user.name,
-  });
+  const rowLen = req.body.passenger.length;
 
-  newRidebooking.save().then(
-    res.send({
-      success: true,
-      status: 'ok'
-    })
-  );
+  req.body.passenger.map((data,index)=>{
+    let newRidebooking = new Ridebooking({
+      passenger: req.body.passenger[index].toString(),
+      pickupLocation: req.body.pickupLocation,
+      targetLocation: req.body.targetLocation,
+      date: req.body.date,
+      return: req.body.return,
+      numberOfGuest: req.body.numberOfGuest,
+      guest: getGuest,
+      remark: req.body.remark,
+      user: req.user.id,
+      author: req.user.name,
+    });
+
+    newRidebooking.save();
+
+    if (rowLen === index + 1) {
+      // last one
+      res.send({
+        success: true,
+        status: 'ok'
+      })
+    } 
+  })
   return
 });
 
-// @route   GET api/memo
-// @desc    Get all memo
+// @route   GET api/ridebooking
+// @desc    Get all ridebooking
 // @access  Public
 router.get('/', (req, res) => {
-  Memo.find()
-    .sort({ date: -1 })
+  Ridebooking.find()
+    .sort({ createdat: -1 })
     .then(posts => res.json(posts))
-    .catch(errs => res.status(404).json({ nopostfiund: 'No memo' }));
+    .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
 });
 
-// @route   PUT api/memo/:memo_id
-// @desc    update memo
-// @access  Private
-router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const { errors, isValid } = validateMemoInput(req.body);
-
-  // Check Validation
-  if (!isValid) {
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
-  }
-
-  Profile.findOne({ user: req.user.id })
-    .then(profile => {
-      Memo.findById(req.params.id)
-        .then(post => {
-          // Check for post owener
-          if (post.user.toString() !== req.user.id) {
-            return res.status(401).json({ notauthorized: 'User not authorized' });
-          }
-
-          // Update post
-          Memo.findByIdAndUpdate(
-            // the id of the item to find
-            req.params.id,
-
-            // the change to be made. Mongoose will smartly combine your existing 
-            // document with this change, which allows for partial updates too
-            req.body,
-
-            // an option that asks mongoose to return the updated version 
-            // of the document instead of the pre-updated one.
-            { new: true },
-
-            // the callback function
-            (err, post) => {
-              // Handle any possible database errors
-              if (err) return res.status(500).send(err);
-              return res.send(post);
-            }
-          )
-
-        })
-        .catch(err => res.status(404).json({ updatepost: err }));
-    })
-});
-
-// @route   DELETE api/memo/:memo_id
-// @desc    delete memo
+// @route   DELETE api/ridebooking/:ridebooking_id
+// @desc    delete ridebooking
 // @access  Private
 router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
   Profile.findOne({ user: req.user.id })
     .then(profile => {
-      Memo.findById(req.params.id)
+      Ridebooking.findById(req.params.id)
         .then(post => {
           // Check for post owener
           if (post.user.toString() !== req.user.id) {
@@ -126,5 +77,54 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
         .catch(err => res.status(404).json({ deletepost: err }));
     })
 });
+
+// @route   PUT api/memo/:memo_id
+// @desc    update memo
+// @access  Private
+// router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+//   const { errors, isValid } = validateMemoInput(req.body);
+
+//   // Check Validation
+//   if (!isValid) {
+//     // Return any errors with 400 status
+//     return res.status(400).json(errors);
+//   }
+
+//   Profile.findOne({ user: req.user.id })
+//     .then(profile => {
+//       Memo.findById(req.params.id)
+//         .then(post => {
+//           // Check for post owener
+//           if (post.user.toString() !== req.user.id) {
+//             return res.status(401).json({ notauthorized: 'User not authorized' });
+//           }
+
+//           // Update post
+//           Memo.findByIdAndUpdate(
+//             // the id of the item to find
+//             req.params.id,
+
+//             // the change to be made. Mongoose will smartly combine your existing 
+//             // document with this change, which allows for partial updates too
+//             req.body,
+
+//             // an option that asks mongoose to return the updated version 
+//             // of the document instead of the pre-updated one.
+//             { new: true },
+
+//             // the callback function
+//             (err, post) => {
+//               // Handle any possible database errors
+//               if (err) return res.status(500).send(err);
+//               return res.send(post);
+//             }
+//           )
+
+//         })
+//         .catch(err => res.status(404).json({ updatepost: err }));
+//     })
+// });
+
+
 
 module.exports = router;

@@ -8,8 +8,8 @@ const posts = require('./routes/api/posts');
 const notices = require('./routes/api/notices');
 const memo = require('./routes/api/memo');
 const inout = require('./routes/api/inout');
-const passport = require('passport');
 const ridebooking = require('./routes/api/ridebooking');
+const passport = require('passport');
 
 const app = express();
 

@@ -9,7 +9,7 @@ const RideBookingSchema = new Schema({
     ref: 'users'
   },
   passenger: {
-    type: Array,
+    type: String,
     required: true
   },
   pickupLocation: {
@@ -40,6 +40,10 @@ const RideBookingSchema = new Schema({
   createdat: {
     type: Date,
     default: Date.now
+  },
+  status: {
+    type: String,
+    default: 'Pending'
   }
 });
 
