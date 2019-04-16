@@ -3,11 +3,35 @@ const router = express.Router();
 const passport = require('passport');
 const fs = require('fs');
 
-// Notice model
+// Ridebooking model
 const Ridebooking = require('../../models/Ridebooking');
+
+// Destination model
+const Destination = require('../../models/Destination');
 
 // Profile model
 const Profile = require('../../models/Profile');
+
+// @route   POST api/ridebooking/destination
+// @desc    Create Destination
+// @access  Private
+router.post('/destination', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  let newDestination = new Destination({
+    user: req.user.id,
+    name: req.body.name,
+    remark: req.body.remark,
+  });
+
+  newDestination.save()
+    .then(
+      res.send({
+        success: true,
+        status: 'ok'
+      })
+    );
+  return;
+});
 
 // @route   POST api/ridebooking
 // @desc    Create Ride Booking
@@ -48,6 +72,16 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
   return
 });
 
+// @route   GET api/destination
+// @desc    Get all destination
+// @access  Public
+router.get('/destination', (req, res) => {
+  Destination.find()
+    .sort({ createdat: -1 })
+    .then(posts => res.json(posts))
+    .catch(errs => res.status(404).json({ nopostfiund: 'No destination' }));
+});
+
 // @route   GET api/ridebooking
 // @desc    Get all ridebooking
 // @access  Public
@@ -75,6 +109,66 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
           post.remove().then(() => res.json({ success: true }));
         })
         .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   DELETE api/destination/:destination_id
+// @desc    delete destination
+// @access  Private
+router.delete('/destination/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Destination.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Delete post
+          post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   PUT api/destination/:destination_id
+// @desc    update destination
+// @access  Private
+router.put('/destination/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Destination.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Update post
+          Destination.findByIdAndUpdate(
+            // the id of the item to find
+            req.params.id,
+
+            // the change to be made. Mongoose will smartly combine your existing 
+            // document with this change, which allows for partial updates too
+            req.body,
+
+            // an option that asks mongoose to return the updated version 
+            // of the document instead of the pre-updated one.
+            { new: true },
+
+            // the callback function
+            (err, post) => {
+              // Handle any possible database errors
+              if (err) return res.status(500).send(err);
+              return res.send(post);
+            }
+          )
+
+        })
+        .catch(err => res.status(404).json({ updatepost: err }));
     })
 });
 
