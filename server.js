@@ -10,6 +10,7 @@ const memo = require('./routes/api/memo');
 const inout = require('./routes/api/inout');
 const ridebooking = require('./routes/api/ridebooking');
 const passport = require('passport');
+const multipart = require('connect-multiparty');
 
 const app = express();
 
@@ -20,6 +21,8 @@ app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: "50mb"}));
+
+app.use(multipart({ uploadDir: './uploads' }));
 
 // DB Config
 const db = require('./config/keys').mongoURI;
