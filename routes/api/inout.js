@@ -17,6 +17,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
   const newInout = new Inout({
     staff: req.body.staff,
     remark: req.body.remark,
+    type: req.body.type,
     user: req.user.id,
     inout: req.body.inout,
     author: req.user.name,
