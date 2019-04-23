@@ -8,6 +8,7 @@ const posts = require('./routes/api/posts');
 const notices = require('./routes/api/notices');
 const memo = require('./routes/api/memo');
 const inout = require('./routes/api/inout');
+const gallery = require('./routes/api/gallery');
 const ridebooking = require('./routes/api/ridebooking');
 const passport = require('passport');
 const multipart = require('connect-multiparty');
@@ -21,15 +22,14 @@ app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: "50mb"}));
-
-app.use(multipart({ uploadDir: './uploads' }));
+app.use('/images', express.static('uploads'));
 
 // DB Config
 const db = require('./config/keys').mongoURI;
 
 // Connect to MongoDB
 mongoose
-  .connect(db, { useNewUrlParser: true })
+  .connect(db, { useNewUrlParser: true, useCreateIndex: true })
   .then(() => console.log('MongoDB Connected'))
   .catch(err => console.log(err));
 
@@ -46,6 +46,7 @@ app.use('/api/notices', notices);
 app.use('/api/memo', memo);
 app.use('/api/inout', inout);
 app.use('/api/ridebooking', ridebooking);
+app.use('/api/gallery', gallery);
 
 const port = process.env.PORT || 5000;
 

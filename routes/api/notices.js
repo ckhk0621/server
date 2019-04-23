@@ -24,8 +24,6 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
     return res.status(400).json(errors);
   }
 
-  console.log(`req.body=====`, req.body)
-
   const newNotice = new Notice({
     title: req.body.title,
     content: req.body.content,
