@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const fs = require('fs');
+const moment = require('moment');
 
 // Location model
 const Location = require('../../models/Location');
@@ -96,20 +96,21 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
   //   } 
   // })
 
-
+  let offset = (new Date().getTimezoneOffset() / 60) * -1;
+  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
   let newRidebooking = new Ridebooking({
     orderBy: req.body.orderBy,
     passenger: req.body.passenger,
     pickupLocation: req.body.pickupLocation,
     targetLocation: req.body.targetLocation,
-    date: req.body.date,
+    date: time,
     return: req.body.return,
     numberOfGuest: req.body.numberOfGuest,
     guest: getGuest,
     remark: req.body.remark,
     user: req.user.id,
     author: req.user.name,
-    rowKey: 0
+    author: req.body.plate,
     // children: {
     //   passenger: req.body.passenger,
     //   pickupLocation: req.body.pickupLocation,
@@ -183,6 +184,45 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
           post.remove().then(() => res.json({ success: true }));
         })
         .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   PUT api/ridebooking/:post_id
+// @desc    update ridebooking
+// @access  Private
+router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{  
+  Profile.findOne({user: req.user.id})
+    .then(profile=>{
+      Ridebooking.findById(req.params.id)
+        .then(post=>{
+          // Check for post owener
+          if(post.user.toString() !== req.user.id){
+            return res.status(401).json({notauthorized: 'User not authorized'});
+          }
+
+          // Update post
+          Ridebooking.findByIdAndUpdate(
+            // the id of the item to find
+            req.params.id,
+            
+            // the change to be made. Mongoose will smartly combine your existing 
+            // document with this change, which allows for partial updates too
+            req.body,
+            
+            // an option that asks mongoose to return the updated version 
+            // of the document instead of the pre-updated one.
+            {new: true},
+
+            // the callback function
+            (err, post) => {
+            // Handle any possible database errors
+              if (err) return res.status(500).send(err);
+              return res.send(post);
+            }
+          )
+
+        })
+        .catch(err => res.status(404).json({updatepost: err}));
     })
 });
 

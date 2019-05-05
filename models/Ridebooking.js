@@ -19,6 +19,9 @@ const RideBookingSchema = new Schema({
     type: String,
     required: true
   },
+  plate:{
+    type: String
+  },
   targetLocation: {
     type: String,
     required: true
