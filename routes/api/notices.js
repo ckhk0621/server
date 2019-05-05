@@ -1,7 +1,13 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const router = express.Router();
 const passport = require('passport');
 const fs = require('fs');
+const crypto = require('crypto');
+const multer = require('multer');
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream');
+const methodOverride = require('method-override');
 
 // Notice model
 const Notice = require('../../models/Notice');
@@ -31,28 +37,28 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
     user: req.user.id,
     author: req.user.name,
     images: req.body.images,
-    files: req.body.files,
+    // files: req.body.files,
   });
 
-  if(req.body.files.fileList.length>0){
-    req.body.files.fileList.map(d=>{
-      let time = Date.now()
-      setTimeout(()=>{
-        fs.writeFileSync(__dirname + `/../../uploads/${time}-${d.name}`, d.response, 'binary', function(err) {
-          if(err){
-              console.log(err);
-            }
-        })
-      }, 500);
-    })
-  }
-
-  // newNotice.save().then(
-  //   res.send({
-  //     success: true,
-  //     status: 'ok'
+  // if(req.body.files.fileList.length>0){
+  //   req.body.files.fileList.map(d=>{
+  //     let time = Date.now()
+  //     setTimeout(()=>{
+  //       fs.writeFileSync(__dirname + `/../../uploads/${time}-${d.name}`, d.response, 'binary', function(err) {
+  //         if(err){
+  //             console.log(err);
+  //           }
+  //       })
+  //     }, 500);
   //   })
-  // );
+  // }
+
+  newNotice.save().then(
+    res.send({
+      success: true,
+      status: 'ok'
+    })
+  );
   return
 });
 

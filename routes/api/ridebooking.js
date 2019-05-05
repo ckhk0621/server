@@ -69,30 +69,69 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
   const rowLen = req.body.passenger.length;
 
-  req.body.passenger.map((data,index)=>{
-    let newRidebooking = new Ridebooking({
-      passenger: req.body.passenger[index].toString(),
-      pickupLocation: req.body.pickupLocation,
-      targetLocation: req.body.targetLocation,
-      date: req.body.date,
-      return: req.body.return,
-      numberOfGuest: req.body.numberOfGuest,
-      guest: getGuest,
-      remark: req.body.remark,
-      user: req.user.id,
-      author: req.user.name,
-    });
+  // req.body.passenger.map((data,index)=>{
+  //   let newRidebooking = new Ridebooking({
+  //     orderBy: req.body.orderBy,
+  //     passenger: req.body.passenger[index].toString(),
+  //     pickupLocation: req.body.pickupLocation,
+  //     targetLocation: req.body.targetLocation,
+  //     date: req.body.date,
+  //     return: req.body.return,
+  //     numberOfGuest: req.body.numberOfGuest,
+  //     guest: getGuest,
+  //     remark: req.body.remark,
+  //     user: req.user.id,
+  //     author: req.user.name,
+  //   });
 
-    newRidebooking.save();
+  //   if (rowLen === index + 1) {
+  //     // last one
+  //     newRidebooking.save()
+  //     .then(
+  //       res.send({
+  //         success: true,
+  //         status: 'ok'
+  //       })
+  //     )
+  //   } 
+  // })
 
-    if (rowLen === index + 1) {
-      // last one
+
+  let newRidebooking = new Ridebooking({
+    orderBy: req.body.orderBy,
+    passenger: req.body.passenger,
+    pickupLocation: req.body.pickupLocation,
+    targetLocation: req.body.targetLocation,
+    date: req.body.date,
+    return: req.body.return,
+    numberOfGuest: req.body.numberOfGuest,
+    guest: getGuest,
+    remark: req.body.remark,
+    user: req.user.id,
+    author: req.user.name,
+    rowKey: 0
+    // children: {
+    //   passenger: req.body.passenger,
+    //   pickupLocation: req.body.pickupLocation,
+    //   targetLocation: req.body.targetLocation,
+    //   date: req.body.date,
+    //   return: req.body.return,
+    //   numberOfGuest: req.body.numberOfGuest,
+    //   guest: getGuest,
+    //   remark: req.body.remark,
+    //   user: req.user.id,
+    //   author: req.user.name,
+    // }
+  });
+
+    newRidebooking.save()
+    .then(
       res.send({
         success: true,
         status: 'ok'
       })
-    } 
-  })
+    )
+
   return
 });
 
@@ -122,7 +161,7 @@ router.get('/destination', (req, res) => {
 // @access  Public
 router.get('/', (req, res) => {
   Ridebooking.find()
-    .sort({ createdat: -1 })
+    .sort({ createdat: 'asc' })
     .then(posts => res.json(posts))
     .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
 });

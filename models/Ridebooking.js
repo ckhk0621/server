@@ -8,9 +8,12 @@ const RideBookingSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'users'
   },
-  passenger: {
+  orderBy: {
     type: String,
     required: true
+  },
+  passenger: {
+    type: [String]
   },
   pickupLocation: {
     type: String,
@@ -29,7 +32,7 @@ const RideBookingSchema = new Schema({
     required: true
   },
   numberOfGuest: {
-    type: String
+    type: Number
   },
   guest: {
     type: [String]
@@ -44,6 +47,12 @@ const RideBookingSchema = new Schema({
   status: {
     type: String,
     default: 'Pending'
+  },
+  children: {
+    type: [Object]
+  },
+  rowKey:{
+    type: Number
   }
 });
 
