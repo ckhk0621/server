@@ -26,6 +26,10 @@ const NoticeSchema = new Schema({
     type: Array,
     data: Buffer
   },
+  files:{
+    type: Array,
+    data: Buffer
+  },
   text:{
     type: String
   },

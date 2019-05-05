@@ -27,13 +27,6 @@ router.get('/:id', (req, res)=>{
 router.post('/addPhoto', passport.authenticate('jwt', { session: false }), (req, res) => {
   Gallery.findOne({ title: req.body.gallery })
     .then(data => {
-      // let imagesData = req.body.images
-      // imagesData = imagesData.map(d=>({
-      //   name: d.name,
-      //   size: d.size,
-      //   type: d.type
-      // }))
-
       if(req.body.images.length>0){
         req.body.images.map(d=>{
           let time = Date.now()

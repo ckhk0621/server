@@ -30,16 +30,29 @@ router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
     public: req.body.public,
     user: req.user.id,
     author: req.user.name,
-    // images: req.files,
     images: req.body.images,
+    files: req.body.files,
   });
 
-  newNotice.save().then(
-    res.send({
-      success: true,
-      status: 'ok'
+  if(req.body.files.fileList.length>0){
+    req.body.files.fileList.map(d=>{
+      let time = Date.now()
+      setTimeout(()=>{
+        fs.writeFileSync(__dirname + `/../../uploads/${time}-${d.name}`, d.response, 'binary', function(err) {
+          if(err){
+              console.log(err);
+            }
+        })
+      }, 500);
     })
-  );
+  }
+
+  // newNotice.save().then(
+  //   res.send({
+  //     success: true,
+  //     status: 'ok'
+  //   })
+  // );
   return
 });
 
