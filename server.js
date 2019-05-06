@@ -10,6 +10,7 @@ const memo = require('./routes/api/memo');
 const inout = require('./routes/api/inout');
 const gallery = require('./routes/api/gallery');
 const ridebooking = require('./routes/api/ridebooking');
+const roombooking = require('./routes/api/roombooking');
 const passport = require('passport');
 const multipart = require('connect-multiparty');
 
@@ -48,6 +49,7 @@ app.use('/api/memo', memo);
 app.use('/api/inout', inout);
 app.use('/api/ridebooking', ridebooking);
 app.use('/api/gallery', gallery);
+app.use('/api/roombooking', roombooking);
 
 const port = process.env.PORT || 5000;
 
