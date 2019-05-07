@@ -18,22 +18,18 @@ const Destination = require('../../models/Destination');
 // Profile model
 const Profile = require('../../models/Profile');
 
-// @route   POST api/ridebooking
+// @route   POST api/roombooking
 // @desc    Create Ride Booking
 // @access  Private
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-
-
-  // let offset = (new Date().getTimezoneOffset() / 60) * -1;
   let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
-  let startTime = moment(req.body.startTime).utcOffset(8).format('HH:MM')
-  let endTime = moment(req.body.endTime).utcOffset(8).format('HH:MM')
   let newRoombooking = new Roombooking({
     orderBy: req.body.orderBy,
     reservation: req.body.reservation,
-    startTime: startTime,
-    endTime: endTime,
+    startTime: req.body.startTime,
+    endTime: req.body.endTime,
     date: time,
+    bookingType: req.body.bookingType,
     type: req.body.type,
     content: req.body.content,
     remark: req.body.remark,
@@ -47,15 +43,14 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
         status: 'ok'
       })
     )
-
   return
 });
 
-// @route   GET api/ridebooking
-// @desc    Get all ridebooking
+// @route   GET api/roombooking
+// @desc    Get all roombooking
 // @access  Public
 router.get('/', (req, res) => {
-  Ridebooking.find()
+  Roombooking.find()
     .sort({ createdat: 'asc' })
     .then(posts => res.json(posts))
     .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
@@ -67,7 +62,7 @@ router.get('/', (req, res) => {
 router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
   Profile.findOne({ user: req.user.id })
     .then(profile => {
-      Ridebooking.findById(req.params.id)
+      Roombooking.findById(req.params.id)
         .then(post => {
           // Check for post owener
           if (post.user.toString() !== req.user.id) {

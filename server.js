@@ -11,6 +11,7 @@ const inout = require('./routes/api/inout');
 const gallery = require('./routes/api/gallery');
 const ridebooking = require('./routes/api/ridebooking');
 const roombooking = require('./routes/api/roombooking');
+const room2booking = require('./routes/api/room2booking');
 const passport = require('passport');
 const multipart = require('connect-multiparty');
 
@@ -50,6 +51,7 @@ app.use('/api/inout', inout);
 app.use('/api/ridebooking', ridebooking);
 app.use('/api/gallery', gallery);
 app.use('/api/roombooking', roombooking);
+app.use('/api/room2booking', room2booking);
 
 const port = process.env.PORT || 5000;
 

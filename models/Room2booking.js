@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 const fs = require('fs');
 
 // Create Schema
-const RoombookingSchema = new Schema({
+const Room2bookingSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users'
@@ -42,4 +42,4 @@ const RoombookingSchema = new Schema({
   }
 });
 
-module.exports = Roombooking = mongoose.model('roombooking', RoombookingSchema);
+module.exports = Room2booking = mongoose.model('room2booking', Room2bookingSchema);
