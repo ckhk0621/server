@@ -35,49 +35,48 @@ router.post('/ladpSync', (req, res) => {
     filter: 'company=Mainland Headwear Holdings Limited'
   };
 
-  ad.find(opts, function(err, results) {
-    if ((err) || (!results)) {
-      console.log(`HERE=====`, results);
-      console.log('ERROR: ' + JSON.stringify(err));
-      return;
-    }
+  // ad.find(opts, function(err, results) {
+  //   if ((err) || (!results)) {
+  //     console.log(`HERE=====`, results);
+  //     console.log('ERROR: ' + JSON.stringify(err));
+  //     return;
+  //   }
    
-    console.log('Users');
-    _.each(results.users, function(user) {
-    let ldapUser = {
-      ...user,
-      role: (user.dn.indexOf('OU=Admin')!== -1) ? 'Admin' : 'User'
-    }
+  //   _.each(results.users, function(user) {
+  //   let ldapUser = {
+  //     ...user,
+  //     role: (user.dn.indexOf('OU=Admin')!== -1) ? 'Admin' : 'User'
+  //   }
 
-    User.findOne({ email: ldapUser.mail})
-    .then(user => {
-      if(user){
-        return res.status(400).json({email: 'email already exists'});
-      } else {
-        // const avator = gravatar.url(ldapUser.email, {
-        //   s: '200', // Size
-        //   r: 'pg', // Rating
-        //   d: 'mm' // Default
-        // });
-        const newUser = new User({
-          name: ldapUser.cn,
-          email: ldapUser.mail,
-          // avator,
-          password: 'passw0rd',
-          role: ldapUser.role
-        });
+  //   User.findOne({ email: ldapUser.mail})
+  //   .then(user => {
+  //     if(user){
+  //       return res.status(400).json({email: 'email already exists'});
+  //     } else {
+  //       // const avator = gravatar.url(ldapUser.email, {
+  //       //   s: '200', // Size
+  //       //   r: 'pg', // Rating
+  //       //   d: 'mm' // Default
+  //       // });
+  //       const newUser = new User({
+  //         name: ldapUser.cn,
+  //         email: ldapUser.mail,
+  //         // avator,
+  //         password: 'passw0rd',
+  //         role: ldapUser.role
+  //       });
 
-        bcrypt.genSalt(10, (err, salt)=> {
-          bcrypt.hash(newUser.password, salt, (err, hash)=>{
-            if(err) throw err;
-            newUser.password = hash;
-            newUser.save()
-              .then(user => res.json(user))
-              .catch(err => console.log(err));
-          })
-        })
-      }
-    })
+  //       bcrypt.genSalt(10, (err, salt)=> {
+  //         bcrypt.hash(newUser.password, salt, (err, hash)=>{
+  //           if(err) throw err;
+  //           newUser.password = hash;
+  //           newUser.save()
+  //             .then(user => res.json(user))
+  //             .catch(err => console.log(err));
+  //         })
+  //       })
+  //     }
+  //   })
     
     
     
@@ -92,9 +91,9 @@ router.post('/ladpSync', (req, res) => {
     
     
     
-    })
+  //   })
    
-  });
+  // });
 
   res.json({msg: "GoGo"})
 });
