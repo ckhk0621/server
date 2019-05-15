@@ -18,6 +18,9 @@ const UserSchema = new Schema({
   avator: {
     type: String
   },
+  role:{
+    type: String
+  },
   date: {
     type: Date,
     default: Date.now

@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const keys = require('../../config/keys');
 const passport = require('passport');
+const ActiveDirectory = require('activedirectory');
+const _ = require('lodash');
 
 // Load Input Validation
 const validateRegisterInput = require('../../validation/register');
@@ -17,7 +19,85 @@ const User = require('../../models/User')
 // @desc    Test post route
 // @access  Public
 
-router.get('/test', (req, res) => res.json({msg: "Users work"}));
+const config = { url: 'ldap://192.168.1.235:389',
+                baseDN: 'DC=mainland,DC=com,DC=hk',
+                username: 'administrator@mainland.com.hk',
+                password: 'Xx#0&2io' }
+
+router.post('/ladpSync', (req, res) => {
+  const ad = new ActiveDirectory(config)
+  console.log(`ad====`,ad);
+
+  var query = 'OU=mainlandHK';
+
+  var opts = {
+    baseDN: 'DC=mainland,DC=com,DC=hk',
+    filter: 'company=Mainland Headwear Holdings Limited'
+  };
+
+  ad.find(opts, function(err, results) {
+    if ((err) || (!results)) {
+      console.log(`HERE=====`, results);
+      console.log('ERROR: ' + JSON.stringify(err));
+      return;
+    }
+   
+    console.log('Users');
+    _.each(results.users, function(user) {
+    let ldapUser = {
+      ...user,
+      role: (user.dn.indexOf('OU=Admin')!== -1) ? 'Admin' : 'User'
+    }
+
+    User.findOne({ email: ldapUser.mail})
+    .then(user => {
+      if(user){
+        return res.status(400).json({email: 'email already exists'});
+      } else {
+        // const avator = gravatar.url(ldapUser.email, {
+        //   s: '200', // Size
+        //   r: 'pg', // Rating
+        //   d: 'mm' // Default
+        // });
+        const newUser = new User({
+          name: ldapUser.cn,
+          email: ldapUser.mail,
+          // avator,
+          password: 'passw0rd',
+          role: ldapUser.role
+        });
+
+        bcrypt.genSalt(10, (err, salt)=> {
+          bcrypt.hash(newUser.password, salt, (err, hash)=>{
+            if(err) throw err;
+            newUser.password = hash;
+            newUser.save()
+              .then(user => res.json(user))
+              .catch(err => console.log(err));
+          })
+        })
+      }
+    })
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    })
+   
+  });
+
+  res.json({msg: "GoGo"})
+});
 
 // @route   GET api/users/register
 // @desc    Register user
@@ -100,10 +180,10 @@ router.post('/login',(req, res)=>{
             const payload = {
               id: user.id, 
               name: user.name,
+              email: user.email,
+              role: user.role,
               avator: user.avator
             }
-
-            const isAdmin = email === 'admin@mail.com' ? 'admin' : 'user';
 
             // Sign Token
             jwt.sign(
@@ -114,7 +194,7 @@ router.post('/login',(req, res)=>{
                 res.send({
                   success: true,
                   token: 'Bearer ' + token,
-                  currentAuthority: isAdmin,
+                  currentAuthority: user.role,
                   status: 'ok',
                   type
                 })
@@ -140,7 +220,8 @@ router.get('/current', passport.authenticate('jwt', {session: false}), (req, res
   res.json({
     id: req.user.id,
     name: req.user.name,
-    email: req.user.email
+    email: req.user.email,
+    role: req.user.role
   });
 });
 

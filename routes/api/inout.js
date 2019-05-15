@@ -51,8 +51,10 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
     .then(profile => {
       Inout.findById(req.params.id)
         .then(post => {
+          console.log(`req.user.role======`,req.user.role)
+          console.log(`post======`,post)
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
