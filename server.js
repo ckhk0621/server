@@ -20,7 +20,7 @@ const app = express();
 
 const cors = require('cors');
 
-app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
+app.use(cors({ origin: 'http://192.168.1.79:8000', credentials: true }));
 
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
@@ -55,4 +55,4 @@ app.use('/api/room2booking', room2booking);
 
 const port = process.env.PORT || 5000;
 
-app.listen(port, () => console.log(`SERVER RUNNING ON PORT ${port}`));
+app.listen(port, '0.0.0.0', () => console.log(`SERVER RUNNING ON PORT ${port}`));
