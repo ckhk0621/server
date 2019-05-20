@@ -65,7 +65,7 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
       Roombooking.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
@@ -85,7 +85,7 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) 
       Ridebooking.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
@@ -124,7 +124,7 @@ router.delete('/location/:id', passport.authenticate('jwt', { session: false }),
       Location.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
@@ -144,7 +144,7 @@ router.delete('/destination/:id', passport.authenticate('jwt', { session: false 
       Destination.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
@@ -165,7 +165,7 @@ router.put('/location/:id', passport.authenticate('jwt', { session: false }), (r
       Location.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
@@ -205,10 +205,10 @@ router.put('/destination/:id', passport.authenticate('jwt', { session: false }),
       Destination.findById(req.params.id)
         .then(post => {
           // Check for post owener
-          if (post.user.toString() !== req.user.id) {
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
-
+          
           // Update post
           Destination.findByIdAndUpdate(
             // the id of the item to find
