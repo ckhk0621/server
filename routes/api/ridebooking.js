@@ -268,6 +268,7 @@ router.get('/destination', (req, res) => {
 // @access  Public
 router.get('/', (req, res) => {
   Ridebooking.find()
+    .sort({ date: 'asc' })
     .sort({ createdat: 'asc' })
     .then(posts => res.json(posts))
     .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
