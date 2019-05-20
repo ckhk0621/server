@@ -3,6 +3,9 @@ const router = express.Router();
 const passport = require('passport');
 const moment = require('moment');
 
+// Driver model
+const Driver = require('../../models/Driver');
+
 // Plate model
 const Plate = require('../../models/Plate');
 
@@ -17,6 +20,56 @@ const Destination = require('../../models/Destination');
 
 // Profile model
 const Profile = require('../../models/Profile');
+
+// @route   POST api/ridebooking/driver
+// @desc    Create Driver
+// @access  Private
+router.post('/driver', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  let newDriver = new Driver({
+    user: req.user.id,
+    name: req.body.name
+  });
+
+  newDriver.save()
+    .then(
+      res.send({
+        success: true,
+        status: 'ok'
+      })
+    );
+  return;
+});
+
+// @route   GET api/driver
+// @desc    Get all driver
+// @access  Public
+router.get('/driver', (req, res) => {
+  Driver.find()
+    .sort({ createdat: -1 })
+    .then(posts => res.json(posts))
+    .catch(errs => res.status(404).json({ nopostfiund: 'No Driver' }));
+});
+
+// @route   DELETE api/ridebooking/:driver_id
+// @desc    delete driver
+// @access  Private
+router.delete('/driver/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Driver.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Delete post
+          post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
 
 // @route   POST api/ridebooking/plate
 // @desc    Create Plate
