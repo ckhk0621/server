@@ -3,6 +3,9 @@ const router = express.Router();
 const passport = require('passport');
 const moment = require('moment');
 
+// Plate model
+const Plate = require('../../models/Plate');
+
 // Location model
 const Location = require('../../models/Location');
 
@@ -15,8 +18,58 @@ const Destination = require('../../models/Destination');
 // Profile model
 const Profile = require('../../models/Profile');
 
-// @route   POST api/ridebooking/destination
-// @desc    Create Destination
+// @route   POST api/ridebooking/plate
+// @desc    Create Plate
+// @access  Private
+router.post('/plate', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  let newPlate = new Plate({
+    user: req.user.id,
+    name: req.body.name
+  });
+
+  newPlate.save()
+    .then(
+      res.send({
+        success: true,
+        status: 'ok'
+      })
+    );
+  return;
+});
+
+// @route   GET api/plate
+// @desc    Get all plate
+// @access  Public
+router.get('/plate', (req, res) => {
+  Plate.find()
+    .sort({ createdat: -1 })
+    .then(posts => res.json(posts))
+    .catch(errs => res.status(404).json({ nopostfiund: 'No Plate' }));
+});
+
+// @route   DELETE api/ridebooking/:plate_id
+// @desc    delete plate
+// @access  Private
+router.delete('/plate/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Plate.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Delete post
+          post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   POST api/ridebooking/location
+// @desc    Create Location
 // @access  Private
 router.post('/location', passport.authenticate('jwt', { session: false }), (req, res) => {
 
