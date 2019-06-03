@@ -38,18 +38,26 @@ router.get('/user/:user_id', (req, res)=>{
 // @desc    get all profiles
 // @access  Public
 
-router.get('/all', (req, res)=>{
-  const errors = {};
-  Profile.find()
-    .populate('user', ['name', 'avator'])
-    .then(profiles=>{
-      if(!profiles){
-        errors.noprofile = 'There are no profiles';
-        return res.status(404).json(errors);
-      }
-      res.json(profiles);
-    })
-    .catch(err=> res.status(404).json({profiles: 'There are no profiles'}));
+// router.get('/all', (req, res)=>{
+//   const errors = {};
+//   Profile.find()
+//     .populate('user', ['name'])
+//     .then(profiles=>{
+//       if(!profiles){
+//         errors.noprofile = 'There are no profiles';
+//         return res.status(404).json(errors);
+//       }
+//       console.log(`profiles====`,profiles);
+//       res.json(profiles);
+//     })
+//     .catch(err=> res.status(404).json({profiles: 'There are no profiles'}));
+// });
+
+router.get('/all', (req, res) => {
+    User.find()
+        .sort({ date: -1 })
+        .then(posts => res.json(posts))
+        .catch(errs => res.status(404).json({ nopostfiund: 'No Users' }));
 });
 
 
