@@ -34,6 +34,9 @@ const RideBookingSchema = new Schema({
     type: String,
     required: true
   },
+  driver: {
+    type: String,
+  },
   numberOfGuest: {
     type: Number
   },
