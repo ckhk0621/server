@@ -199,16 +199,16 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
   //         status: 'ok'
   //       })
   //     )
-  //   } 
+  //   }
   // })
 
   let offset = (new Date().getTimezoneOffset() / 60) * -1;
-  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
+  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD');
   let newRidebooking = new Ridebooking({
     orderBy: req.body.orderBy,
     passenger: req.body.passenger,
     pickupLocation: req.body.pickupLocation,
-    targetLocation: req.body.targetLocation,
+    targetLocation: req.body.otherDestination ? req.body.otherDestination : req.body.targetLocation,
     date: time,
     return: req.body.return,
     numberOfGuest: req.body.numberOfGuest,
@@ -216,7 +216,8 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
     remark: req.body.remark,
     user: req.user.id,
     author: req.user.name,
-    author: req.body.plate,
+    plate: req.body.plate,
+
     // children: {
     //   passenger: req.body.passenger,
     //   pickupLocation: req.body.pickupLocation,
@@ -297,7 +298,7 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
 // @route   PUT api/ridebooking/:post_id
 // @desc    update ridebooking
 // @access  Private
-router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{  
+router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
   Profile.findOne({user: req.user.id})
     .then(profile=>{
       Ridebooking.findById(req.params.id)
@@ -311,12 +312,12 @@ router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
           Ridebooking.findByIdAndUpdate(
             // the id of the item to find
             req.params.id,
-            
-            // the change to be made. Mongoose will smartly combine your existing 
+
+            // the change to be made. Mongoose will smartly combine your existing
             // document with this change, which allows for partial updates too
             req.body,
-            
-            // an option that asks mongoose to return the updated version 
+
+            // an option that asks mongoose to return the updated version
             // of the document instead of the pre-updated one.
             {new: true},
 
@@ -392,11 +393,11 @@ router.put('/location/:id', passport.authenticate('jwt', { session: false }), (r
             // the id of the item to find
             req.params.id,
 
-            // the change to be made. Mongoose will smartly combine your existing 
+            // the change to be made. Mongoose will smartly combine your existing
             // document with this change, which allows for partial updates too
             req.body,
 
-            // an option that asks mongoose to return the updated version 
+            // an option that asks mongoose to return the updated version
             // of the document instead of the pre-updated one.
             { new: true },
 
@@ -432,11 +433,11 @@ router.put('/destination/:id', passport.authenticate('jwt', { session: false }),
             // the id of the item to find
             req.params.id,
 
-            // the change to be made. Mongoose will smartly combine your existing 
+            // the change to be made. Mongoose will smartly combine your existing
             // document with this change, which allows for partial updates too
             req.body,
 
-            // an option that asks mongoose to return the updated version 
+            // an option that asks mongoose to return the updated version
             // of the document instead of the pre-updated one.
             { new: true },
 
