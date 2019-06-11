@@ -268,11 +268,32 @@ router.get('/destination', (req, res) => {
 // @desc    Get all ridebooking
 // @access  Public
 router.get('/', (req, res) => {
-  Ridebooking.find()
-    .sort({ date: 'asc' })
-    .sort({ createdat: 'asc' })
+    // let query = { age: { $gte: 0 } }; // default query
+  Ridebooking.find({
+      status: { $in: ["Pending", "Confirm"] } ,
+      date: {
+          $gte: new Date(new Date().getTime()-60*5*1000).toISOString()
+      }
+    })
+    .sort({ date: 'asc', createdat: 'asc' })
     .then(posts => res.json(posts))
     .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
+});
+
+// @route   GET api/ridebooking/completed
+// @desc    Get all completed ride booking
+// @access  Public
+router.get('/completed', (req, res) => {
+    // let query = { age: { $gte: 0 } }; // default query
+    Ridebooking.find({
+        status: { $in: ["Confirm"] } ,
+        date: {
+            $lte: new Date(new Date().getTime()-60*5*1000).toISOString()
+        }
+    })
+        .sort({ date: 'asc', createdat: 'asc' })
+        .then(posts => res.json(posts))
+        .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
 });
 
 // @route   DELETE api/ridebooking/:ridebooking_id
@@ -308,6 +329,12 @@ router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
             return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
+          const updateBody = {
+              ...req.body,
+              date: moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
+          };
+
+
           // Update post
           Ridebooking.findByIdAndUpdate(
             // the id of the item to find
@@ -315,7 +342,7 @@ router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
 
             // the change to be made. Mongoose will smartly combine your existing
             // document with this change, which allows for partial updates too
-            req.body,
+                updateBody,
 
             // an option that asks mongoose to return the updated version
             // of the document instead of the pre-updated one.
