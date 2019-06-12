@@ -92,26 +92,26 @@ router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
     // Return any errors with 400 status
     return res.status(400).json(errors);
   }
-  
+
   Profile.findOne({user: req.user.id})
     .then(profile=>{
       Notice.findById(req.params.id)
         .then(post=>{
           // Check for post owener
-          if(post.user.toString() !== req.user.id){
-            return res.status(401).json({notauthorized: 'User not authorized'});
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
           // Update post
           Notice.findByIdAndUpdate(
             // the id of the item to find
             req.params.id,
-            
-            // the change to be made. Mongoose will smartly combine your existing 
+
+            // the change to be made. Mongoose will smartly combine your existing
             // document with this change, which allows for partial updates too
             req.body,
-            
-            // an option that asks mongoose to return the updated version 
+
+            // an option that asks mongoose to return the updated version
             // of the document instead of the pre-updated one.
             {new: true},
 
@@ -139,8 +139,8 @@ router.delete('/:id',passport.authenticate('jwt', {session: false}), (req, res)=
       Notice.findById(req.params.id)
         .then(post=>{
           // Check for post owener
-          if(post.user.toString() !== req.user.id){
-            return res.status(401).json({notauthorized: 'User not authorized'});
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
           }
 
           // Delete post
