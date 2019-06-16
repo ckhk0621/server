@@ -30,6 +30,9 @@ const RideBookingSchema = new Schema({
     type: Date,
     required: true
   },
+  time: {
+    type: Date,
+  },
   return: {
     type: String,
     required: true
