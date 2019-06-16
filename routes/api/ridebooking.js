@@ -203,13 +203,13 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
   // })
 
   let offset = (new Date().getTimezoneOffset() / 60) * -1;
-  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD');
+  let date = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD');
   let newRidebooking = new Ridebooking({
     orderBy: req.body.orderBy,
     passenger: req.body.passenger,
     pickupLocation: req.body.pickupLocation,
     targetLocation: req.body.otherDestination ? req.body.otherDestination : req.body.targetLocation,
-    date: time,
+    date: date,
     return: req.body.return,
     numberOfGuest: req.body.numberOfGuest,
     guest: getGuest,
