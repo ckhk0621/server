@@ -64,4 +64,61 @@ router.post('/send', (req, res) => {
     res.status(200).send({status: true});
 });
 
+
+// @route   POST api/email
+// @desc    send room booking email
+// @access  private
+router.post('/roombooking', (req, res) => {
+
+    // console.log(`req====`,req.body);
+    const demoEmail = req.body.demoEmail;
+    const emailContent = req.body.data;
+
+    console.log(`demoEmail====`,demoEmail);
+    console.log(`emailContent====`,emailContent);
+
+
+    const date = !_.isEmpty(emailContent.date) ? emailContent.date : moment().add(1, 'days').format('YYYY-MM-DD');
+
+    //
+    const htmlContent = `會議內容,<br/>
+    日期: ${moment(date).format('YYYY-MM-DD')}<br/>
+    會議: ${emailContent.bookingType}<br/>
+    預訂人仕: ${emailContent.reservation}<br/>
+    開始時間: ${emailContent.startTime}<br/>
+    結束時間: ${emailContent.endTime}<br/>
+    備註: ${emailContent.remark}
+    
+    <p>** 如有任何查詢，請聯絡相關人仕！**</p>
+    `;
+
+    const transporter = nodeMailer.createTransport({
+        service: 'gmail',
+        secure: true,  //true for 465 port, false for other ports
+        auth: {
+            user: 'mainland.intranet@gmail.com',
+            pass: 'mainland@passw0rd'
+        }
+    });
+
+    let mailOptions = {
+        from: `"Room booking 功能測試" <no-reply@mainland-intranet.com>`, // sender address
+        to: demoEmail, // list of receivers
+        subject: 'IT 部門員工注意', // Subject line
+        text: '', // plain text body
+        html: htmlContent // html body
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(400).send({status: false})
+        } else {
+            res.status(200).send({status: true});
+        }
+    });
+
+    res.status(200).send({status: true});
+});
+
 module.exports = router;
