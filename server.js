@@ -23,6 +23,9 @@ const cors = require('cors');
 
 app.use(cors({ origin: 'http://localhost:8000', credentials: true }));
 
+// pre-render
+app.use(require('prerender-node'));
+
 // Body parser middleware
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json({limit: "50mb"}));
