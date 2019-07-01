@@ -88,7 +88,7 @@ router.get('/', (req, res) => {
       posts.map(d=>console.log(`posts year==`, moment(d.year).format('YYYY-MM')));
       const resData = posts.filter(d=> {
         console.log(moment(data.time).format('YYYY')===moment(d.year).format('YYYY').toString());
-        if( moment(d.year).format('YYYY').toString() == moment(data.time).format('YYYY')){
+        if( moment(d.year).format('YYYY-MM').toString() >= moment(data.time).format('YYYY-MM')){
           return d
         }
       });
