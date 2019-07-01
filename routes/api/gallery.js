@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const fs = require('fs');
+const moment = require('moment');
 
 // Profile model
 const Profile = require('../../models/Profile');
@@ -61,6 +62,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 
   const newGallery = new Gallery({
     title: req.body.title,
+    year: moment(req.body.year).utcOffset(8).format('YYYY-MM'),
     description: req.body.description,
     user: req.user.id,
     author: req.user.name
@@ -79,9 +81,20 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 // @desc    Get all gallery
 // @access  Public
 router.get('/', (req, res) => {
+  const data = req.query;
   Gallery.find()
-    .sort({ date: -1 })
-    .then(posts => res.json(posts))
+    .sort({ year: -1 })
+    .then(posts => {
+      posts.map(d=>console.log(`posts year==`, moment(d.year).format('YYYY-MM')));
+      const resData = posts.filter(d=> {
+        console.log(moment(data.time).format('YYYY')===moment(d.year).format('YYYY').toString());
+        if( moment(d.year).format('YYYY').toString() == moment(data.time).format('YYYY')){
+          return d
+        }
+      });
+      console.log(`resData===`, resData);
+      return res.json(resData)
+    })
     .catch(errs => res.status(404).json({ nopostfiund: 'No Gallery' }));
 });
 
@@ -93,10 +106,10 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
     .then(profile => {
       Gallery.findById(req.params.id)
         .then(post => {
-          // Check for post owener
-          if (post.user.toString() !== req.user.id) {
-            return res.status(401).json({ notauthorized: 'User not authorized' });
-          }
+            // Check for post owener
+            if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+                return res.status(401).json({ notauthorized: 'User not authorized' });
+            }
 
           // Delete post
           post.remove().then(() => res.json({ success: true }));
@@ -104,52 +117,5 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
         .catch(err => res.status(404).json({ deletepost: err }));
     })
 });
-
-// @route   PUT api/memo/:memo_id
-// @desc    update memo
-// @access  Private
-// router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-//   const { errors, isValid } = validateMemoInput(req.body);
-
-//   // Check Validation
-//   if (!isValid) {
-//     // Return any errors with 400 status
-//     return res.status(400).json(errors);
-//   }
-
-//   Profile.findOne({ user: req.user.id })
-//     .then(profile => {
-//       Memo.findById(req.params.id)
-//         .then(post => {
-//           // Check for post owener
-//           if (post.user.toString() !== req.user.id) {
-//             return res.status(401).json({ notauthorized: 'User not authorized' });
-//           }
-
-//           // Update post
-//           Memo.findByIdAndUpdate(
-//             // the id of the item to find
-//             req.params.id,
-
-//             // the change to be made. Mongoose will smartly combine your existing 
-//             // document with this change, which allows for partial updates too
-//             req.body,
-
-//             // an option that asks mongoose to return the updated version 
-//             // of the document instead of the pre-updated one.
-//             { new: true },
-
-//             // the callback function
-//             (err, post) => {
-//               // Handle any possible database errors
-//               if (err) return res.status(500).send(err);
-//               return res.send(post);
-//             }
-//           )
-
-//         })
-//         .catch(err => res.status(404).json({ updatepost: err }));
-//     })
-// });
 
 module.exports = router;

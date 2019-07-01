@@ -77,7 +77,6 @@ router.post('/roombooking', (req, res) => {
     console.log(`demoEmail====`,demoEmail);
     console.log(`emailContent====`,emailContent);
 
-
     const date = !_.isEmpty(emailContent.date) ? emailContent.date : moment().add(1, 'days').format('YYYY-MM-DD');
 
     //
