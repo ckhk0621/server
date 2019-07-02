@@ -1,8 +1,10 @@
 const express = require('express');
+const fileUpload = require('express-fileupload');
 const router = express.Router();
 const passport = require('passport');
 const fs = require('fs');
 const moment = require('moment');
+const path = require('path');
 
 // Profile model
 const Profile = require('../../models/Profile');
@@ -22,27 +24,34 @@ router.get('/:id', (req, res)=>{
     .catch(err => res.status(404).json({nopostfiund: 'No post found with that id'}));
 });
 
-// @route   POST api/gallery
-// @desc    Create gallery
+// @route   POST api/addPhoto
+// @desc    Create Photo
 // @access  Private
 router.post('/addPhoto', passport.authenticate('jwt', { session: false }), (req, res) => {
   Gallery.findOne({ title: req.body.gallery })
     .then(data => {
       if(req.body.images.length>0){
         req.body.images.map(d=>{
-          let time = Date.now()
+          let time = Date.now();
           setTimeout(()=>{
-            fs.writeFile(__dirname + `/../../uploads/${time}-${d.name}`, d.thumbUrl.replace(/^data:image\/jpeg;base64,/, ""), {encoding: 'base64'}, function(err) {
+            const imageURL =  d.thumbUrl.replace(/^data:image\/png;base64,/, "");
+            const binaryData  =   new Buffer(imageURL, 'base64').toString('binary');
+            const reqPath = path.join(__dirname, '../../');
+            fs.writeFile(reqPath + `/uploads/${time}-${d.name}`, binaryData, {encoding: 'binary'}, function(err) {
               if(err){
                   console.log(err);
                 }
             })
           }, 500);
+
+          console.log(`image data===`, d);
           
           data.images.push(`${time}-${d.name}`)
 
         })
       }
+
+      console.log(`DATA=====`,data);
 
       data.save().then(() => res.json({ 
         success: true,
