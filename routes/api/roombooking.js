@@ -22,7 +22,7 @@ const Profile = require('../../models/Profile');
 // @desc    Create Ride Booking
 // @access  Private
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
+  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD');
   let newRoombooking = new Roombooking({
     orderBy: req.body.orderBy,
     reservation: req.body.reservation,
@@ -109,7 +109,6 @@ router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) 
               return res.send(post);
             }
           )
-
         })
         .catch(err => res.status(404).json({ updatepost: err }));
     })
