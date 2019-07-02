@@ -4,6 +4,9 @@ const nodeMailer = require('nodemailer');
 const _ = require('lodash');
 const moment = require('moment');
 
+// Ridebooking model
+const Ridebooking = require('../../models/Ridebooking');
+
 // @route   POST api/email
 // @desc    send email
 // @access  Admin private
@@ -60,6 +63,40 @@ router.post('/send', (req, res) => {
             res.status(200).send({status: true});
         }
     });
+
+    emailContent.map(d=>{
+        console.log(`emailContent._id====`,d._id);
+        Ridebooking.findById(d._id)
+            .then(post=>{
+                // Update post
+                const updateBody = {
+                    ...d,
+                    emailSent: 'true'
+                };
+
+                console.log(`updateBody====`,updateBody);
+
+                // Update post
+                Ridebooking.findByIdAndUpdate(
+                    // the id of the item to find
+                    updateBody._id,
+
+                    // the change to be made. Mongoose will smartly combine your existing
+                    // document with this change, which allows for partial updates too
+                    updateBody,
+
+                    // an option that asks mongoose to return the updated version
+                    // of the document instead of the pre-updated one.
+                    {new: true},
+                    // the callback function
+                    (err, post) => {
+                        // Handle any possible database errors
+                        if (err) return res.status(500).send(err);
+                        // return res.send(post);
+                    }
+                )
+            })
+    })
 
     res.status(200).send({status: true});
 });

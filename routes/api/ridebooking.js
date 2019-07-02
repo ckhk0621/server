@@ -271,9 +271,9 @@ router.get('/', (req, res) => {
     // let query = { age: { $gte: 0 } }; // default query
   Ridebooking.find({
       status: { $in: ["Pending", "Confirm"] } ,
-      date: {
-          $gte: new Date(new Date().getTime()-60*5*1000).toISOString()
-      }
+      // date: {
+      //     $gte: new Date(new Date().getTime()-60*5*1000).toISOString()
+      // }
     })
     .sort({ date: 'asc', createdat: 'asc' })
     .then(posts => res.json(posts))
@@ -333,7 +333,6 @@ router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
               ...req.body,
               date: moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
           };
-
 
           // Update post
           Ridebooking.findByIdAndUpdate(

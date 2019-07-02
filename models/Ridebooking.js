@@ -60,6 +60,10 @@ const RideBookingSchema = new Schema({
   children: {
     type: [Object]
   },
+  emailSent:{
+    type: String,
+    default: 'false'
+  },
   rowKey:{
     type: Number
   }
