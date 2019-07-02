@@ -22,7 +22,7 @@ const Profile = require('../../models/Profile');
 // @desc    Create Ride Booking
 // @access  Private
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
-  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD')
+  let time = moment(req.body.date).utcOffset(8).format('YYYY-MM-DD');
   let newRoombooking = new Roombooking({
     orderBy: req.body.orderBy,
     reservation: req.body.reservation,
@@ -73,6 +73,164 @@ router.delete('/:id', passport.authenticate('jwt', { session: false }), (req, re
           post.remove().then(() => res.json({ success: true }));
         })
         .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   PUT api/ridebooking/:post_id
+// @desc    update ridebooking
+// @access  Private
+router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Ridebooking.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Update post
+          Ridebooking.findByIdAndUpdate(
+            // the id of the item to find
+            req.params.id,
+
+            // the change to be made. Mongoose will smartly combine your existing 
+            // document with this change, which allows for partial updates too
+            req.body,
+
+            // an option that asks mongoose to return the updated version 
+            // of the document instead of the pre-updated one.
+            { new: true },
+
+            // the callback function
+            (err, post) => {
+              // Handle any possible database errors
+              if (err) return res.status(500).send(err);
+              return res.send(post);
+            }
+          )
+        })
+        .catch(err => res.status(404).json({ updatepost: err }));
+    })
+});
+
+// @route   DELETE api/ridebooking/:location_id
+// @desc    delete location
+// @access  Private
+router.delete('/location/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Location.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Delete post
+          post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   DELETE api/destination/:destination_id
+// @desc    delete destination
+// @access  Private
+router.delete('/destination/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Destination.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Delete post
+          post.remove().then(() => res.json({ success: true }));
+        })
+        .catch(err => res.status(404).json({ deletepost: err }));
+    })
+});
+
+// @route   PUT api/destination/:location_id
+// @desc    update location
+// @access  Private
+router.put('/location/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Location.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+
+          // Update post
+          Location.findByIdAndUpdate(
+            // the id of the item to find
+            req.params.id,
+
+            // the change to be made. Mongoose will smartly combine your existing 
+            // document with this change, which allows for partial updates too
+            req.body,
+
+            // an option that asks mongoose to return the updated version 
+            // of the document instead of the pre-updated one.
+            { new: true },
+
+            // the callback function
+            (err, post) => {
+              // Handle any possible database errors
+              if (err) return res.status(500).send(err);
+              return res.send(post);
+            }
+          )
+
+        })
+        .catch(err => res.status(404).json({ updatepost: err }));
+    })
+});
+
+// @route   PUT api/destination/:destination_id
+// @desc    update destination
+// @access  Private
+router.put('/destination/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
+
+  Profile.findOne({ user: req.user.id })
+    .then(profile => {
+      Destination.findById(req.params.id)
+        .then(post => {
+          // Check for post owener
+          if (post.user.toString() !== req.user.id && req.user.role !== 'Admin') {
+            return res.status(401).json({ notauthorized: 'User not authorized' });
+          }
+          
+          // Update post
+          Destination.findByIdAndUpdate(
+            // the id of the item to find
+            req.params.id,
+
+            // the change to be made. Mongoose will smartly combine your existing 
+            // document with this change, which allows for partial updates too
+            req.body,
+
+            // an option that asks mongoose to return the updated version 
+            // of the document instead of the pre-updated one.
+            { new: true },
+
+            // the callback function
+            (err, post) => {
+              // Handle any possible database errors
+              if (err) return res.status(500).send(err);
+              return res.send(post);
+            }
+          )
+
+        })
+        .catch(err => res.status(404).json({ updatepost: err }));
     })
 });
 

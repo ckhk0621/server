@@ -120,4 +120,55 @@ router.post('/roombooking', (req, res) => {
     res.status(200).send({status: true});
 });
 
+// @route   POST api/email
+// @desc    send inout email
+// @access  private
+router.post('/inout', (req, res) => {
+
+    // console.log(`req====`,req.body);
+    const demoEmail = req.body.demoEmail;
+    const emailContent = req.body.values;
+    const remark = req.body.remark;
+
+    console.log(`body====`,emailContent);
+
+    //
+    const htmlContent = `INOUT RECORD:<br/>
+    員工: ${emailContent.staff}<br/>
+    日期: ${moment(emailContent.inout[0]).format('YYYY-MM-DD HH:MM')} - ${moment(emailContent.inout[1]).format('YYYY-MM-DD HH:MM')}<br/>
+    類別: ${emailContent.type}<br/>
+    備註: ${remark}
+
+    <p>** 如有任何查詢，請聯絡相關人仕！**</p>
+    `;
+
+    const transporter = nodeMailer.createTransport({
+        service: 'gmail',
+        secure: true,  //true for 465 port, false for other ports
+        auth: {
+            user: 'mainland.intranet@gmail.com',
+            pass: 'mainland@passw0rd'
+        }
+    });
+
+    let mailOptions = {
+        from: `"INOUT RECORD 功能測試" <no-reply@mainland-intranet.com>`, // sender address
+        to: demoEmail, // list of receivers
+        subject: 'ADMIN 請注意', // Subject line
+        text: '', // plain text body
+        html: htmlContent // html body
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.log(error);
+            res.status(400).send({status: false})
+        } else {
+            res.status(200).send({status: true});
+        }
+    });
+
+    res.status(200).send({status: true});
+});
+
 module.exports = router;
