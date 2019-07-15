@@ -38,6 +38,7 @@ router.post('/', passport.authenticate('jwt', { session: false }), (req, res) =>
 // @access  Public
 router.get('/', (req, res) => {
   Inout.find()
+    // .skip(1).limit(3)
     .sort({ date: -1 })
     .then(posts => res.json(posts))
     .catch(errs => res.status(404).json({ nopostfiund: 'No memo' }));
