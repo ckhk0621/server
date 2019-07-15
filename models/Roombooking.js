@@ -28,7 +28,7 @@ const RoombookingSchema = new Schema({
     type: String,
   },
   bookingType: {
-    type: String
+    type: Array
   },
   content: {
     type: String,
