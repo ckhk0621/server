@@ -271,9 +271,9 @@ router.get('/', (req, res) => {
     // let query = { age: { $gte: 0 } }; // default query
   Ridebooking.find({
       status: { $in: ["Pending", "Confirm"] } ,
-      // date: {
-      //     $gte: new Date(new Date().getTime()-60*5*1000).toISOString()
-      // }
+      date: {
+          $gte: new Date().toISOString()
+      }
     })
     .sort({ date: 'asc', createdat: 'asc' })
     .then(posts => res.json(posts))
@@ -291,9 +291,9 @@ router.get('/completed', (req, res) => {
             $lte: new Date(new Date().getTime()-60*5*1000).toISOString()
         }
     })
-        .sort({ date: 'asc', createdat: 'asc' })
-        .then(posts => res.json(posts))
-        .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
+    .sort({ date: 'asc', createdat: 'asc' })
+    .then(posts => res.json(posts))
+    .catch(errs => res.status(404).json({ nopostfiund: 'No booking' }));
 });
 
 // @route   DELETE api/ridebooking/:ridebooking_id

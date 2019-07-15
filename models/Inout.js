@@ -13,7 +13,7 @@ const InoutSchema = new Schema({
     required: true
   },
   type: {
-    type: String
+    type: Array
   },
   remark: {
     type: String
