@@ -23,17 +23,17 @@ const validateNoticeInput = require('../../validation/notice');
 // @access  Private
 router.post('/', passport.authenticate('jwt', {session: false}), (req, res)=>{
 
-  const {errors, isValid } = validateNoticeInput(req.body);
+  // const {errors, isValid } = validateNoticeInput(req.body);
 
   // Check Validation
-  if(!isValid){
-    return res.status(400).json(errors);
-  }
+  // if(!isValid){
+  //   return res.status(400).json(errors);
+  // }
 
   const newNotice = new Notice({
     title: req.body.title,
     content: req.body.content,
-    public: req.body.public,
+    // public: req.body.public,
     user: req.user.id,
     author: req.user.name,
     images: req.body.images,
@@ -85,13 +85,13 @@ router.get('/:id', (req, res)=>{
 // @desc    update post
 // @access  Private
 router.put('/:id',passport.authenticate('jwt', {session: false}), (req, res)=>{
-  const {errors, isValid } = validateNoticeInput(req.body);
+  // const {errors, isValid } = validateNoticeInput(req.body);
 
   // Check Validation
-  if(!isValid){
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
-  }
+  // if(!isValid){
+  //   // Return any errors with 400 status
+  //   return res.status(400).json(errors);
+  // }
 
   Profile.findOne({user: req.user.id})
     .then(profile=>{
