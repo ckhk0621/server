@@ -17,7 +17,6 @@ const MemoSchema = new Schema({
   },
   public: {
     type: String,
-    required: true
   },
   priority: {
     type: String
