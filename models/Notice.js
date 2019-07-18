@@ -18,10 +18,10 @@ const NoticeSchema = new Schema({
   description: {
     type: String
   },
-  public: {
-    type: String,
-    required: true
-  },
+  // public: {
+  //   type: String,
+  //   required: true
+  // },
   images:{
     type: Array,
     data: Buffer
