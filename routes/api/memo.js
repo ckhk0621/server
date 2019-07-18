@@ -17,12 +17,12 @@ const validateMemoInput = require('../../validation/memo');
 // @access  Private
 router.post('/', passport.authenticate('jwt', { session: false }), (req, res) => {
 
-  const { errors, isValid } = validateMemoInput(req.body);
+  // const { errors, isValid } = validateMemoInput(req.body);
 
-  // Check Validation
-  if (!isValid) {
-    return res.status(400).json(errors);
-  }
+  // // Check Validation
+  // if (!isValid) {
+  //   return res.status(400).json(errors);
+  // }
 
   const newMemo = new Memo({
     title: req.body.title,
@@ -57,13 +57,13 @@ router.get('/', (req, res) => {
 // @desc    update memo
 // @access  Private
 router.put('/:id', passport.authenticate('jwt', { session: false }), (req, res) => {
-  const { errors, isValid } = validateMemoInput(req.body);
+  // const { errors, isValid } = validateMemoInput(req.body);
 
-  // Check Validation
-  if (!isValid) {
-    // Return any errors with 400 status
-    return res.status(400).json(errors);
-  }
+  // // Check Validation
+  // if (!isValid) {
+  //   // Return any errors with 400 status
+  //   return res.status(400).json(errors);
+  // }
 
   Profile.findOne({ user: req.user.id })
     .then(profile => {
